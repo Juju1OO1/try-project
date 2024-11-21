@@ -1,23 +1,29 @@
-const express = require('express');
-const path = require('path');
+import express from 'express';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
+const port = 3000;
 
-// 設置靜態檔案夾（如需要）
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// 處理 ES 模組中的 __dirname 問題
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// 使用上傳圖片的路由
-const uploadRoute = require('./routes/upload');
-app.use(uploadRoute);
+// 靜態檔案
+app.use(express.static(path.join(__dirname, 'public')));
 
-// 錯誤處理（可選）
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send({ error: 'Something went wrong!' });
+// 影像上傳
+const uploadDirectory = path.join(__dirname, 'uploads');
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadDirectory),
+    filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname),
+});
+const upload = multer({ storage });
+
+app.post('/upload', upload.single('image'), (req, res) => {
+    res.json({ message: 'File uploaded successfully!', file: req.file });
 });
 
 // 啟動伺服器
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+app.listen(port, () => console.log(`Server is running on http://localhost:${port}`));

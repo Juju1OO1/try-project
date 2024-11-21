@@ -1,39 +1,42 @@
-const express = require('express');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+import express from 'express';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const router = express.Router();
 
-// 確保上傳資料夾存在
+// 處理 ES 模組中的 __dirname 問題
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// 確保 uploads 資料夾存在
 const uploadDirectory = path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadDirectory)) {
     fs.mkdirSync(uploadDirectory);
 }
 
-// 使用 multer 設置圖片儲存
+// 設定 Multer 儲存方式
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDirectory);
-    },
+    destination: (req, file, cb) => cb(null, uploadDirectory),
     filename: (req, file, cb) => {
-        cb(null, file.originalname);
-    }
+        const timestamp = Date.now();
+        const filename = `${timestamp}-${file.originalname}`;
+        cb(null, filename);
+    },
 });
 
 const upload = multer({ storage });
 
-// 定義上傳圖片的 POST 路由
-router.post('/upload', upload.single('image'), (req, res) => {
+// 定義 /upload 路由
+router.post('/', upload.single('image'), (req, res) => {
     if (!req.file) {
-        return res.status(400).json({ message: 'No file uploaded' });
+        return res.status(400).json({ error: 'No file uploaded' });
     }
-
     res.json({
-        message: 'Image uploaded successfully!',
-        filename: req.file.filename,
-        path: req.file.path,
+        message: 'File uploaded successfully!',
+        file: req.file,
     });
 });
 
-module.exports = router;
+export default router;
