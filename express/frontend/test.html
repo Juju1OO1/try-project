@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<head>
+    <title>Image Cropper</title>
+    <!-- Required CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <link rel="stylesheet" href="../cropperJS/box.css">
+</head>
+<body>
+    <div class="controls">
+        <input type="file" id="upload" accept="image/*">
+        <button id="sureCut">Crop & Compress</button>
+        <button id="saveAllBtn">Save All</button>
+
+    </div>
+
+    <div class="img-container">
+        <img id="tailoringImg">
+    </div>
+
+    <!-- 縮圖列表 -->
+    <div class="preview-list" id="previewList"></div>
+
+    <!-- 顯示選擇的完整圖片 -->
+    <div class="result" id="result">
+        <p></p>
+        <span></span>
+        <img id="fullImage" src="">
+    </div>
+
+    <!-- Required JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="../cropperJS/imgCrop.js"></script>
+</body>
+</！html>
