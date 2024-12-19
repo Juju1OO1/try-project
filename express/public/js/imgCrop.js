@@ -120,4 +120,5 @@ $('#saveAllBtn').click(async function() {
             console.error("Error saving image:", error);
         });
     }
+    alert("已儲存");
 });
