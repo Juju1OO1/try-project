@@ -3,13 +3,46 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { exec } from 'child_process';
+import connectDB from  './public/js/db.js';
+import router from './routes/auth.js';
+import dotenv from 'dotenv';
+import session from 'express-session'; // 引入 express-session
+
+
+
+
+
 
 const app = express();
 const port = 3000;
 
+
+// 連線 MongoDB
+connectDB();
+
+// 設置中介層
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// 設定 express-session
+dotenv.config();
+app.use(session({
+    secret: process.env.SESSION_SECRET, // 替換為一個更安全的密鑰
+    resave: false,          // 避免每次請求都重新儲存 session
+    saveUninitialized: false, // 避免儲存空的 session
+}));
+
+
+
+
 // 處理 Express 中的 __dirname 問題
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// 使用者登入路由
+app.use('/auth', router);
+
+
 
 // 靜態檔案目錄
 app.use(express.static(path.join(__dirname, "public")));
@@ -57,6 +90,17 @@ app.post('/upload', upload.single('image'), (req, res) => {
         });
     });
 });
+
+
+
+
+
+
+
+
+
+
+
 
 // 啟動伺服器
 app.listen(port, () => console.log(`Server is running on http://localhost:${port}`));
